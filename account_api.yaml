@@ -1,0 +1,2095 @@
+openapi: 3.0.0
+info:
+  title: Account
+  description: RESTful API for account OAuth server
+  version: 2.7.0
+tags:
+  - name: api
+    description: Operations about apis
+paths:
+  /api/v2/account/identity/users/password/confirm_code:
+    post:
+      description: Sets new account password
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                reset_password_token:
+                  description: Token from email
+                  type: string
+                password:
+                  description: User password
+                  type: string
+                confirm_password:
+                  description: User password
+                  type: string
+              required:
+                - reset_password_token
+                - password
+                - confirm_password
+      responses:
+        "201":
+          description: Resets password
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersPasswordConfirmCode
+  /api/v2/account/identity/users/password/generate_code:
+    post:
+      description: Send password reset instructions
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Account email
+                  type: string
+                captcha_response:
+                  description: Response from captcha widget
+                  type: string
+                resend:
+                  description: resend
+                  type: boolean
+              required:
+                - email
+      responses:
+        "201":
+          description: Generated password reset code
+        "400":
+          description: Required params are missing
+        "404":
+          description: User doesn't exist
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersPasswordGenerateCode
+  /api/v2/account/identity/users/email/read_ektp:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                upload:
+                  description: Array of Rack::Multipart::UploadedFile
+                  type: string
+                identificator:
+                  description: Identificator for documents to be supplied together
+                  type: string
+              required:
+                - upload
+                - identificator
+      responses:
+        "201":
+          description: created ReadEktp
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersEmailReadEktp
+  /api/v2/account/identity/users/email/confirm_email_code:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: User Email
+                  type: string
+                code:
+                  description: User Code
+                  type: string
+              required:
+                - email
+                - code
+      responses:
+        "201":
+          description: created ConfirmEmailCode
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersEmailConfirmEmailCode
+  /api/v2/account/identity/users/email/confirm_code:
+    post:
+      description: Confirms an account
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  description: Token from email
+                  type: string
+              required:
+                - token
+      responses:
+        "201":
+          description: Confirms an account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+        "400":
+          description: Required params are missing
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersEmailConfirmCode
+  /api/v2/account/identity/users/email/generate_code:
+    post:
+      description: Send confirmations instructions
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Account email
+                  type: string
+                captcha_response:
+                  description: Response from captcha widget
+                  type: string
+              required:
+                - email
+      responses:
+        "201":
+          description: Generated verification code
+        "400":
+          description: Required params are missing
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersEmailGenerateCode
+  /api/v2/account/identity/users/register_geetest:
+    get:
+      description: Register Geetest captcha
+      responses:
+        "200":
+          description: Register Geetest captcha
+      tags:
+        - api
+      operationId: getApiV2AccountIdentityUsersRegisterGeetest
+  /api/v2/account/identity/users:
+    post:
+      description: Creates new user
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: User Email
+                  type: string
+                password:
+                  description: User Password
+                  type: string
+                username:
+                  description: User Username
+                  type: string
+                refid:
+                  description: Referral uid
+                  type: string
+                captcha_response:
+                  description: Response from captcha widget
+                  type: string
+                data:
+                  description: "Any additional key: value pairs in json string format"
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "201":
+          description: Creates new user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+        "400":
+          description: Required params are missing
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsers
+  /api/v2/account/identity/users/access:
+    post:
+      description: Creates new whitelist restriction
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                whitelink_token:
+                  type: string
+              required:
+                - whitelink_token
+      responses:
+        "200":
+          description: Whitelist restriction was created
+        "400":
+          description: Required params are missing
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityUsersAccess
+  /api/v2/account/identity/sessions/signature:
+    post:
+      description: Start session by signature
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  description: Nick name
+                  type: string
+                nonce:
+                  description: Auth Nonce in milliseconds
+                  type: string
+                signature:
+                  description: Auth Signature
+                  type: string
+                captcha_response:
+                  description: Response from captcha widget
+                  type: string
+              required:
+                - nickname
+                - nonce
+                - signature
+      responses:
+        "201":
+          description: Start session by signature
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: postApiV2AccountIdentitySessionsSignature
+  /api/v2/account/identity/sessions/auth0:
+    post:
+      description: Auth0 authentication by id_token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id_token:
+                  description: ID Token
+                  type: string
+              required:
+                - id_token
+      responses:
+        "200":
+          description: User authenticated
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: postApiV2AccountIdentitySessionsAuth0
+  /api/v2/account/identity/sessions:
+    delete:
+      description: Destroy current session
+      parameters:
+        - in: query
+          name: auth_method
+          description: Auth method
+          required: false
+          schema:
+            type: string
+            enum:
+              - password
+              - signature
+              - auth0
+            default: password
+      responses:
+        "204":
+          description: Session was destroyed
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: deleteApiV2AccountIdentitySessions
+    post:
+      description: Start a new session
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                captcha_response:
+                  description: Response from captcha widget
+                  type: string
+                otp_code:
+                  description: Code from Google Authenticator
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "201":
+          description: Start a new session
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: postApiV2AccountIdentitySessions
+  /api/v2/account/identity/configs:
+    get:
+      description: Get account configurations
+      responses:
+        "200":
+          description: Get account configurations
+      tags:
+        - api
+      operationId: getApiV2AccountIdentityConfigs
+  /api/v2/account/identity/version:
+    get:
+      description: Get account version
+      responses:
+        "200":
+          description: Get account version
+      tags:
+        - api
+      operationId: getApiV2AccountIdentityVersion
+  /api/v2/account/identity/time:
+    get:
+      description: Get server current unix timestamp.
+      responses:
+        "200":
+          description: Get server current unix timestamp.
+      tags:
+        - api
+      operationId: getApiV2AccountIdentityTime
+  /api/v2/account/identity/ping:
+    get:
+      description: Test connectivity
+      responses:
+        "200":
+          description: Test connectivity
+      tags:
+        - api
+      operationId: getApiV2AccountIdentityPing
+  /api/v2/account/identity/password/validate:
+    post:
+      description: Password strength testing
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountIdentityPasswordValidate"
+      responses:
+        "201":
+          description: Password strength testing
+      tags:
+        - api
+      operationId: postApiV2AccountIdentityPasswordValidate
+  /api/v2/account/public/health/ready:
+    get:
+      description: Get application readiness status
+      responses:
+        "200":
+          description: Get application readiness status
+      tags:
+        - api
+      operationId: getApiV2AccountPublicHealthReady
+  /api/v2/account/public/health/alive:
+    get:
+      description: Get application liveness status
+      responses:
+        "200":
+          description: Get application liveness status
+      tags:
+        - api
+      operationId: getApiV2AccountPublicHealthAlive
+  /api/v2/account/public/configs/auth0:
+    get:
+      description: Get auth0 configuration
+      responses:
+        "200":
+          description: Get auth0 configuration
+      tags:
+        - api
+      operationId: getApiV2AccountPublicConfigsAuth0
+  /api/v2/account/public/configs:
+    get:
+      description: Get account configurations
+      responses:
+        "200":
+          description: Get account configurations
+      tags:
+        - api
+      operationId: getApiV2AccountPublicConfigs
+  /api/v2/account/public/version:
+    get:
+      description: Get account version
+      responses:
+        "200":
+          description: Get account version
+      tags:
+        - api
+      operationId: getApiV2AccountPublicVersion
+  /api/v2/account/public/time:
+    get:
+      description: Get server current unix timestamp.
+      responses:
+        "200":
+          description: Get server current unix timestamp.
+      tags:
+        - api
+      operationId: getApiV2AccountPublicTime
+  /api/v2/account/public/verification:
+    post:
+      responses:
+        "201":
+          description: created Verification
+      tags:
+        - api
+      operationId: postApiV2AccountPublicVerification
+  /api/v2/account/public/uid:
+    post:
+      description: Get Full info by UID
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                uid:
+                  description: User Email
+                  type: string
+                token:
+                  description: Token Authentication
+                  type: string
+              required:
+                - uid
+                - token
+      responses:
+        "201":
+          description: Get Full info by UID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+        "400":
+          description: Required params are missing
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountPublicUid
+  /api/v2/account/public/ping:
+    get:
+      description: Test connectivity
+      responses:
+        "200":
+          description: Test connectivity
+      tags:
+        - api
+      operationId: getApiV2AccountPublicPing
+  /api/v2/account/public/verihub/testing:
+    post:
+      description: KYC Testing
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                nik:
+                  description: User password
+                  type: string
+                name:
+                  description: User password
+                  type: string
+                birth_date:
+                  description: User password
+                  type: string
+                email:
+                  description: User password
+                  type: string
+                phone:
+                  description: User password
+                  type: string
+                image:
+                  description: User password
+                  type: string
+              required:
+                - nik
+                - name
+                - birth_date
+                - email
+                - phone
+                - image
+      responses:
+        "201":
+          description: KYC Testing
+      tags:
+        - api
+      operationId: postApiV2AccountPublicVerihubTesting
+  /api/v2/account/public/password/validate:
+    post:
+      description: Password strength testing
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountIdentityPasswordValidate"
+      responses:
+        "201":
+          description: Password strength testing
+      tags:
+        - api
+      operationId: postApiV2AccountPublicPasswordValidate
+  /api/v2/account/public/kyc:
+    post:
+      description: KYC callback
+      responses:
+        "201":
+          description: KYC callback
+      tags:
+        - api
+      operationId: postApiV2AccountPublicKyc
+  "/api/v2/account/resource/swagger_doc/{name}":
+    get:
+      description: Swagger compatible API description for specific API
+      parameters:
+        - in: path
+          name: name
+          description: Resource name of mounted API
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: locale
+          description: Locale of API documentation
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Swagger compatible API description for specific API
+      tags:
+        - api
+      operationId: getApiV2AccountResourceSwaggerDocName
+  /api/v2/account/resource/swagger_doc:
+    get:
+      description: Swagger compatible API description
+      responses:
+        "200":
+          description: Swagger compatible API description
+      tags:
+        - api
+      operationId: getApiV2AccountResourceSwaggerDoc
+  "/api/v2/account/resource/service_accounts/api_keys/{kid}":
+    put:
+      description: Updates an api key
+      parameters:
+        - in: path
+          name: kid
+          description: Service account kid
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                service_account_uid:
+                  type: string
+                scope:
+                  description: Comma separated scopes
+                  type: string
+                state:
+                  description: State of API Key. "active" state means key is active and can
+                    be used for auth
+                  type: string
+                totp_code:
+                  description: Code from Google Authenticator
+                  type: string
+              required:
+                - service_account_uid
+                - totp_code
+      responses:
+        "200":
+          description: Updates an api key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: putApiV2AccountResourceServiceAccountsApiKeysKid
+    delete:
+      description: Delete an api key for specific service account
+      parameters:
+        - in: query
+          name: service_account_uid
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: kid
+          description: Service account kid
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: totp_code
+          description: Code from Google Authenticator
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Succefully deleted
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: deleteApiV2AccountResourceServiceAccountsApiKeysKid
+  /api/v2/account/resource/service_accounts/api_keys:
+    post:
+      description: Create api key for specific service account.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                service_account_uid:
+                  type: string
+                algorithm:
+                  description: Service account algorithm
+                  type: string
+                scope:
+                  description: Comma separated scopes
+                  type: string
+                totp_code:
+                  description: Code from Google Authenticator
+                  type: string
+              required:
+                - service_account_uid
+                - algorithm
+                - totp_code
+      responses:
+        "201":
+          description: Create api key for specific service account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Require 2FA and totp code
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: postApiV2AccountResourceServiceAccountsApiKeys
+    get:
+      description: List all api keys for specific service account.
+      parameters:
+        - in: query
+          name: ordering
+          description: If set, returned values will be sorted in specific order, defaults
+            to 'asc'.
+          required: false
+          schema:
+            type: string
+            default: asc
+        - in: query
+          name: order_by
+          description: Name of the field, which result will be ordered by.
+          required: false
+          schema:
+            type: string
+            default: id
+        - in: query
+          name: page
+          description: Page number (defaults to 1).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - in: query
+          name: limit
+          description: Number of users per page (defaults to 100, maximum is 100).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 100
+        - in: query
+          name: service_account_uid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List all api keys for specific service account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Require 2FA and totp code
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourceServiceAccountsApiKeys
+  /api/v2/account/resource/service_accounts:
+    get:
+      description: List all service accounts for current user.
+      security:
+        - BearerToken: []
+      responses:
+        "200":
+          description: List all service accounts for current user.
+        "400":
+          description: Require 2FA and totp code
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourceServiceAccounts
+  /api/v2/account/resource/data_storage:
+    post:
+      description: Create data storage
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  description: Storage title
+                  type: string
+                data:
+                  description: Storage data
+                  type: string
+              required:
+                - title
+                - data
+      responses:
+        "201":
+          description: Data Storage was created
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceDataStorage
+  /api/v2/account/resource/api_keys:
+    get:
+      description: List all api keys for current account.
+      parameters:
+        - in: query
+          name: ordering
+          description: If set, returned values will be sorted in specific order, defaults
+            to 'asc'.
+          required: false
+          schema:
+            type: string
+            default: asc
+        - in: query
+          name: order_by
+          description: Name of the field, which result will be ordered by.
+          required: false
+          schema:
+            type: string
+            default: id
+        - in: query
+          name: page
+          description: Page number (defaults to 1).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - in: query
+          name: limit
+          description: Number of users per page (defaults to 100, maximum is 100).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        "200":
+          description: List all api keys for current account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Require 2FA and totp code
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourceApiKeys
+    post:
+      description: Create an api key
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                algorithm:
+                  description: API key algorithm
+                  type: string
+                scope:
+                  description: Comma separated scopes
+                  type: string
+                totp_code:
+                  description: Code from Google Authenticator
+                  type: string
+              required:
+                - algorithm
+                - totp_code
+      responses:
+        "201":
+          description: Create an api key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceApiKeys
+  "/api/v2/account/resource/api_keys/{kid}":
+    delete:
+      description: Delete an api key
+      parameters:
+        - in: path
+          name: kid
+          description: API key kid
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: totp_code
+          description: Code from Google Authenticator
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Succefully deleted
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: deleteApiV2AccountResourceApiKeysKid
+    patch:
+      description: Updates an api key
+      parameters:
+        - in: path
+          name: kid
+          description: API key kid
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                scope:
+                  description: Comma separated scopes
+                  type: string
+                state:
+                  description: State of API Key. "active" state means key is active and can
+                    be used for auth
+                  type: string
+                totp_code:
+                  description: Code from Google Authenticator
+                  type: string
+              required:
+                - totp_code
+      responses:
+        "200":
+          description: Updates an api key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_APIKey"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: patchApiV2AccountResourceApiKeysKid
+  /api/v2/account/resource/otp/verify:
+    post:
+      description: Verify 2FA code
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountResourceOtpVerify"
+      responses:
+        "200":
+          description: 2FA was verified
+        "400":
+          description: 2FA has not been enabled for this account or code is missing
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceOtpVerify
+  /api/v2/account/resource/otp/disable:
+    post:
+      description: Disable 2FA
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountResourceOtpVerify"
+      responses:
+        "200":
+          description: 2FA was disabled
+        "400":
+          description: 2FA has not been enabled for this account or code is missing
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceOtpDisable
+  /api/v2/account/resource/otp/enable:
+    post:
+      description: Enable 2FA
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountResourceOtpVerify"
+      responses:
+        "200":
+          description: 2FA was enabled
+        "400":
+          description: 2FA has been enabled for this account or code is missing
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceOtpEnable
+  /api/v2/account/resource/otp/generate_qrcode:
+    post:
+      description: Generate qr code for 2FA
+      responses:
+        "200":
+          description: QR code was generated
+        "400":
+          description: 2FA has been enabled for this account
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: postApiV2AccountResourceOtpGenerateQrcode
+  /api/v2/account/resource/phones/verify:
+    post:
+      description: Verify a phone
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  description: Phone number with country code
+                  type: string
+                verification_code:
+                  description: Verification code from sms
+                  type: string
+              required:
+                - phone_number
+                - verification_code
+      responses:
+        "201":
+          description: Verify a phone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: postApiV2AccountResourcePhonesVerify
+  /api/v2/account/resource/phones/send_code:
+    post:
+      description: Resend activation code
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountResourcePhonesSendCode"
+      responses:
+        "200":
+          description: Activation code was resend
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourcePhonesSendCode
+  /api/v2/account/resource/phones:
+    post:
+      description: Add new phone
+      requestBody:
+        $ref: "#/components/requestBodies/postApiV2AccountResourcePhonesSendCode"
+      responses:
+        "200":
+          description: New phone was added
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourcePhones
+    get:
+      description: Returns list of user's phones
+      responses:
+        "200":
+          description: Returns list of user's phones
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Phone"
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourcePhones
+  /api/v2/account/resource/documents:
+    post:
+      description: Upload a new document for current user
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                birthDate:
+                  description: Birth Date
+                  type: string
+                idNumber:
+                  description: Document number
+                  type: string
+                name:
+                  description: Identity name
+                  type: string
+                address:
+                  description: Identity address
+                  type: string
+                district:
+                  description: "District "
+                  type: string
+                city:
+                  description: "City "
+                  type: string
+                place_of_birth:
+                  description: "place of birth "
+                  type: string
+                province:
+                  description: "Province "
+                  type: string
+                country:
+                  description: "Country "
+                  type: string
+                selfie_image:
+                  description: Array of Rack::Multipart::UploadedFile
+                  type: string
+                identity_image:
+                  description: Array of Rack::Multipart::UploadedFile
+                  type: string
+                identificator:
+                  description: Identificator for documents to be supplied together
+                  type: string
+              required:
+                - birthDate
+                - idNumber
+                - name
+                - address
+                - district
+                - city
+                - place_of_birth
+                - province
+                - country
+                - selfie_image
+                - identity_image
+      responses:
+        "201":
+          description: Document is uploaded
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceDocuments
+    get:
+      description: Return current user documents list
+      responses:
+        "200":
+          description: Return current user documents list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Document"
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourceDocuments
+  /api/v2/account/resource/profiles:
+    put:
+      description: Update a profile for current_user
+      requestBody:
+        $ref: "#/components/requestBodies/putApiV2AccountResourceProfiles"
+      responses:
+        "200":
+          description: Update a profile for current_user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Profile"
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: putApiV2AccountResourceProfiles
+    post:
+      description: Create a profile for current_user
+      requestBody:
+        $ref: "#/components/requestBodies/putApiV2AccountResourceProfiles"
+      responses:
+        "201":
+          description: Create a profile for current_user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Profile"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "409":
+          description: Profile already exists
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceProfiles
+  /api/v2/account/resource/profiles/me:
+    get:
+      description: Return profiles of current resource owner
+      responses:
+        "200":
+          description: Return profiles of current resource owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Profile"
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: User has no profile
+      tags:
+        - api
+      operationId: getApiV2AccountResourceProfilesMe
+  "/api/v2/account/resource/labels/{key}":
+    delete:
+      description: Delete a label  with 'public' scope.
+      parameters:
+        - in: path
+          name: key
+          description: Label key.
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Succefully deleted
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: deleteApiV2AccountResourceLabelsKey
+    patch:
+      description: Update a label with 'public' scope.
+      parameters:
+        - in: path
+          name: key
+          description: Label key.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                value:
+                  description: Label value.
+                  type: string
+              required:
+                - value
+      responses:
+        "200":
+          description: Update a label with 'public' scope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Label"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: patchApiV2AccountResourceLabelsKey
+    get:
+      description: Return a label by key.
+      parameters:
+        - in: path
+          name: key
+          description: Label key.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Return a label by key.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Label"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "404":
+          description: Record is not found
+      tags:
+        - api
+      operationId: getApiV2AccountResourceLabelsKey
+  /api/v2/account/resource/labels:
+    post:
+      description: Create a label with 'public' scope.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                key:
+                  description: Label key.
+                  type: string
+                value:
+                  description: Label value.
+                  type: string
+              required:
+                - key
+                - value
+      responses:
+        "201":
+          description: Create a label with 'public' scope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Label"
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceLabels
+    get:
+      description: List all labels for current user.
+      parameters:
+        - in: query
+          name: ordering
+          description: If set, returned labels sorted in specific order, default to "asc".
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+      responses:
+        "200":
+          description: List all labels for current user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Label"
+        "401":
+          description: Invalid bearer token
+      tags:
+        - api
+      operationId: getApiV2AccountResourceLabels
+  /api/v2/account/resource/users/password:
+    put:
+      description: Sets new account password
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  description: Previous account password
+                  type: string
+                new_password:
+                  description: User password
+                  type: string
+                confirm_password:
+                  description: User password
+                  type: string
+              required:
+                - old_password
+                - new_password
+                - confirm_password
+      responses:
+        "201":
+          description: Changes password
+        "400":
+          description: Required params are empty
+        "404":
+          description: Record is not found
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: putApiV2AccountResourceUsersPassword
+  "/api/v2/account/resource/users/activity/{topic}":
+    get:
+      description: Returns user activity
+      parameters:
+        - in: path
+          name: topic
+          description: "Topic of user activity. Allowed: [all, password, session, otp]"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: time_from
+          description: An integer represents the seconds elapsed since Unix epoch.If set,
+            only activities created after the time will be returned.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: time_to
+          description: An integer represents the seconds elapsed since Unix epoch.If set,
+            only activities created before the time will be returned.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: result
+          description: "Result of user activity. Allowed: [succeed, failed, denied]"
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: page
+          description: Page number (defaults to 1).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - in: query
+          name: limit
+          description: Number of users per page (defaults to 100, maximum is 100).
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        "200":
+          description: Returns user activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_Activity"
+      tags:
+        - api
+      operationId: getApiV2AccountResourceUsersActivityTopic
+  /api/v2/account/resource/users/me:
+    delete:
+      description: Blocks current user
+      parameters:
+        - in: query
+          name: password
+          description: Account password
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: otp_code
+          description: Code from Google Authenticator
+          required: false
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Current user was blocked
+      tags:
+        - api
+      operationId: deleteApiV2AccountResourceUsersMe
+    put:
+      description: Updates current user data field
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                data:
+                  description: "Any additional key: value pairs in json string format"
+                  type: string
+              required:
+                - data
+      responses:
+        "200":
+          description: Updates current user data field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+      tags:
+        - api
+      operationId: putApiV2AccountResourceUsersMe
+    get:
+      description: Returns current user
+      responses:
+        "200":
+          description: Returns current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/API_V2_Entities_UserWithFullInfo"
+      tags:
+        - api
+      operationId: getApiV2AccountResourceUsersMe
+  /api/v2/account/resource/addresses:
+    post:
+      description: Upload a new address approval document for current user
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                country:
+                  description: Document type
+                  type: string
+                address:
+                  description: Document number
+                  type: string
+                upload:
+                  description: Array of Rack::Multipart::UploadedFile
+                  type: string
+                city:
+                  description: Document expiration date
+                  type: string
+                postcode:
+                  description: "Any additional key: value pairs in json string format"
+                  type: string
+              required:
+                - country
+                - address
+                - upload
+                - city
+                - postcode
+      responses:
+        "201":
+          description: New address approval document was uploaded
+        "400":
+          description: Required params are empty
+        "401":
+          description: Invalid bearer token
+        "422":
+          description: Validation errors
+      tags:
+        - api
+      operationId: postApiV2AccountResourceAddresses
+servers:
+  - url: https://dev.nagaexchange.co.id/api/v2/account
+components:
+  requestBodies:
+    postApiV2AccountResourceOtpVerify:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              code:
+                description: Code from Google Authenticator
+                type: string
+            required:
+              - code
+    postApiV2AccountIdentityPasswordValidate:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              password:
+                description: User password
+                type: string
+            required:
+              - password
+    postApiV2AccountResourcePhonesSendCode:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              phone_number:
+                description: Phone number with country code
+                type: string
+              channel:
+                description: The verification method to use
+                type: string
+                enum:
+                  - call
+                  - sms
+                default: sms
+            required:
+              - phone_number
+    putApiV2AccountResourceProfiles:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              first_name:
+                description: First Name
+                type: string
+              last_name:
+                description: Last Name
+                type: string
+              dob:
+                description: Date of Birth
+                type: string
+                format: date
+              address:
+                description: Address
+                type: string
+              postcode:
+                description: Postcode
+                type: string
+              city:
+                description: City
+                type: string
+              country:
+                description: Country
+                type: string
+              metadata:
+                description: "Any additional key: value pairs in json string format"
+                type: string
+              confirm:
+                description: Profile confirmation
+                type: boolean
+  schemas:
+    API_V2_Entities_UserWithFullInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User Email
+        uid:
+          type: string
+          description: User UID
+        role:
+          type: string
+          description: User role
+        level:
+          type: integer
+          format: int32
+          description: User level
+        otp:
+          type: boolean
+          description: is 2FA enabled for account
+        state:
+          type: string
+          description: "User state: active, pending, inactive"
+        referral_uid:
+          type: string
+          description: UID of referrer
+        data:
+          type: string
+          description: Additional phone and profile info
+        csrf_token:
+          type: string
+          description: Сsrf protection token
+        username:
+          type: string
+          description: User username
+        labels:
+          $ref: "#/components/schemas/API_V2_Entities_Label"
+        phones:
+          $ref: "#/components/schemas/API_V2_Entities_Phone"
+        profiles:
+          $ref: "#/components/schemas/API_V2_Entities_Profile"
+        data_storages:
+          $ref: "#/components/schemas/API_V2_Entities_DataStorage"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: Returns current user
+    API_V2_Entities_Label:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Label key. [a-z0-9_-]+ should be used. Min - 3, max - 255 characters.
+        value:
+          type: string
+          description: Label value. [A-Za-z0-9_-] should be used. Min - 3, max - 255
+            characters.
+        scope:
+          type: string
+          description: "Label scope: 'public' or 'private'"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: List all labels for current user.
+    API_V2_Entities_Phone:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Phone country
+        number:
+          type: string
+          description: Submasked phone number
+        validated_at:
+          type: string
+          format: date
+          description: Phone validation date
+      description: Returns list of user's phones
+    API_V2_Entities_Profile:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: First Name
+        last_name:
+          type: string
+          description: Submasked last name
+        dob:
+          type: string
+          format: date
+          description: Submasked birth date
+        address:
+          type: string
+          description: Address
+        postcode:
+          type: string
+          description: Address Postcode
+        city:
+          type: string
+          description: City name
+        country:
+          type: string
+          description: Country name
+        state:
+          type: string
+          description: "Profile state: drafted, submitted, verified, rejected"
+        metadata:
+          type: object
+          description: Profile additional fields
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: Return profiles of current resource owner
+    API_V2_Entities_DataStorage:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Any additional data title
+        data:
+          type: string
+          description: Any additional data json key:value pairs
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    API_V2_Entities_APIKey:
+      type: object
+      properties:
+        kid:
+          type: string
+          description: JWT public key
+        algorithm:
+          type: string
+          description: Cryptographic hash function type
+        scope:
+          type: string
+          description: Serialized array of scopes
+        state:
+          type: string
+          description: active/non-active state of key
+        secret:
+          type: string
+          description: Api key secret
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: Create an api key
+    API_V2_Entities_Document:
+      type: object
+      properties:
+        upload:
+          type: string
+          description: File url and type
+        doc_type:
+          type: string
+          description: "Document type: passport, driver license, utility bill, identity
+            card, institutional, address, residental"
+        doc_number:
+          type: string
+          description: "Submasked document number: AB123123 type"
+        doc_expire:
+          type: string
+          description: Expire date of uploaded documents
+        metadata:
+          type: string
+          description: Any additional stored data
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: Return current user documents list
+    API_V2_Entities_Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Activity ID
+        user_ip:
+          type: string
+          description: User IP
+        user_ip_country:
+          type: string
+          description: User IP country
+        user_agent:
+          type: string
+          description: User Browser Agent
+        topic:
+          type: string
+          description: Defined topic (session, adjustments) or general by default
+        action:
+          type: string
+          description: "API action: POST => 'create', PUT => 'update', GET => 'read',
+            DELETE => 'delete', PATCH => 'update' or system if there is no match
+            of HTTP method"
+        result:
+          type: string
+          description: "Status of API response: succeed, failed, denied"
+        data:
+          type: string
+          description: Parameters which was sent to specific API endpoint
+        created_at:
+          type: string
+      description: Returns user activity
+    API_V2_Entities_Level:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Level identifier, level number
+        key:
+          type: string
+          description: Label key. [A-Za-z0-9_-] should be used. Min - 3, max - 255
+            characters.
+        value:
+          type: string
+          description: Label value. [A-Za-z0-9_-] should be used. Min - 3, max - 255
+            characters.
+    API_V2_Entities_User:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User Email
+        uid:
+          type: string
+          description: User UID
+        role:
+          type: string
+          description: User role
+        level:
+          type: integer
+          format: int32
+          description: User level
+        otp:
+          type: boolean
+          description: is 2FA enabled for account
+        state:
+          type: string
+          description: "User state: active, pending, inactive"
+        referral_uid:
+          type: string
+          description: UID of referrer
+        data:
+          type: string
+          description: Additional phone and profile info
+        username:
+          type: string
+          description: User username
+    API_V2_Entities_UserWithProfile:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User Email
+        uid:
+          type: string
+          description: User UID
+        role:
+          type: string
+          description: User role
+        level:
+          type: integer
+          format: int32
+          description: User level
+        otp:
+          type: boolean
+          description: is 2FA enabled for account
+        state:
+          type: string
+          description: "User state: active, pending, inactive"
+        referral_uid:
+          type: string
+          description: UID of referrer
+        data:
+          type: string
+          description: Additional phone and profile info
+        username:
+          type: string
+          description: User username
+        profiles:
+          $ref: "#/components/schemas/API_V2_Entities_Profile"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    API_V2_Entities_UserWithKYC:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User Email
+        uid:
+          type: string
+          description: User UID
+        role:
+          type: string
+          description: User role
+        level:
+          type: integer
+          format: int32
+          description: User level
+        otp:
+          type: boolean
+          description: is 2FA enabled for account
+        state:
+          type: string
+          description: "User state: active, pending, inactive"
+        referral_uid:
+          type: string
+          description: UID of referrer
+        data:
+          type: string
+          description: Additional phone and profile info
+        username:
+          type: string
+          description: User username
+        profiles:
+          $ref: "#/components/schemas/API_V2_Entities_Profile"
+        labels:
+          $ref: "#/components/schemas/API_V2_Entities_AdminLabelView"
+        phones:
+          $ref: "#/components/schemas/API_V2_Entities_Phone"
+        documents:
+          $ref: "#/components/schemas/API_V2_Entities_Document"
+        data_storages:
+          $ref: "#/components/schemas/API_V2_Entities_DataStorage"
+        comments:
+          $ref: "#/components/schemas/API_V2_Entities_Comment"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    API_V2_Entities_AdminLabelView:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Label key. [a-z0-9_-]+ should be used. Min - 3, max - 255 characters.
+        value:
+          type: string
+          description: Label value. [A-Za-z0-9_-] should be used. Min - 3, max - 255
+            characters.
+        scope:
+          type: string
+          description: "Label scope: 'public' or 'private'"
+        description:
+          type: string
+          description: "Label desc: json string with any additional information"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    API_V2_Entities_Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Comment id
+        author_uid:
+          type: string
+          description: Comment author UID
+        title:
+          type: string
+          description: Comment title
+        data:
+          type: string
+          description: Comment plain text
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    API_V2_Entities_ServiceAccounts:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User Email
+        uid:
+          type: string
+          description: User UID
+        role:
+          type: string
+          description: Service Account Role
+        level:
+          type: integer
+          format: int32
+          description: User Level
+        state:
+          type: string
+          description: "Service Account State: active, disabled"
+        user:
+          $ref: "#/components/schemas/API_V2_Entities_User"
+        created_at:
+          type: string
+        updated_at:
+          type: string
